@@ -57,11 +57,12 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
-import CurvedMap from "./CurvedMap"
+import dynamic from "next/dynamic";
 
 export default function World() {
   const isOpen = useSidebar();
-  console.log("Sidebar open state:", isOpen);
+  const CurvedMap = dynamic(() => import('./CurvedMap'), { ssr: false })
+
   return (
     <div className="relative h-screen w-full"> {/* Full viewport container */}
       <CurvedMap /> {/* Map will now fill this container */}

@@ -8,7 +8,7 @@ import {
 import L, { LatLngExpression, Marker as LeafletMarker, Polyline as LeafletPolyline } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Contact } from "@/types/contact";
-import { dummyContacts } from "@/data/contacts";
+import { getDataForContactsSection } from "../Services/CRMService";
 
 const iconUrl = "https://cdn-icons-png.flaticon.com/512/252/252025.png";
 
@@ -62,6 +62,19 @@ function getGreatCirclePoints(start: number[], end: number[], segments = 100): L
 
 const CurvedMapLogic: React.FC = () => {
   const map = useMap();
+  const [data, setData] = useState<Contact[]>([]);
+  
+    useEffect(() => {
+      async function fetchData() {
+        const { data, error } = await getDataForContactsSection();
+        if (error) console.error(error);
+        else setData(data ?? []);
+      }
+  
+      fetchData();
+    }, []);
+  
+    console.log("Contacts data:", data);
 
   // State for which marker is selected
   const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
@@ -72,33 +85,31 @@ const CurvedMapLogic: React.FC = () => {
   const polylinesRef = useRef<LeafletPolyline[]>([]);
 
   useEffect(() => {
-    if (!map) return;
+  if (!map || data.length === 0) return;
 
-    // Clear any old markers
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
+  // Clear old markers
+  markersRef.current.forEach((m) => m.remove());
+  markersRef.current = [];
 
-    // Create markers for all contacts
-    dummyContacts.forEach((contact) => {
+  data.forEach(contact => {
       const pos: LatLngExpression = [contact.location.latitude, contact.location.longitude];
       const marker = L.marker(pos, { icon: currentIcon });
 
       marker.addTo(map);
 
-      // On click, set this contact as selected
       marker.on("click", () => {
-        setSelectedContactId(contact.userIid);
+        setSelectedContactId(contact.userId);
       });
 
       markersRef.current.push(marker);
     });
 
     return () => {
-      // Cleanup on unmount
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
     };
-  }, [map]);
+  }, [map, data]);  // <== Add data here
+
 
   // Effect for selected contact changes
   useEffect(() => {
@@ -125,7 +136,7 @@ const CurvedMapLogic: React.FC = () => {
     }
 
     // Find selected contact
-    const selectedContact = dummyContacts.find((c) => c.userIid === selectedContactId);
+    const selectedContact = data.find((c) => c.userId === selectedContactId);
     if (!selectedContact) return;
 
     const pos: LatLngExpression = [selectedContact.location.latitude, selectedContact.location.longitude];
