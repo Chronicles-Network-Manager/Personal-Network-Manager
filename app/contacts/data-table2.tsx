@@ -264,6 +264,11 @@ export function DataTable({
   data: Contact[]
 }) {
   const [data, setData] = React.useState(() => initialData)
+
+  React.useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -286,7 +291,7 @@ export function DataTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.userId,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -541,12 +546,12 @@ function TableCellViewer({ contact }: { contact: Contact }) {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="link" className="w-fit px-0 text-left text-foreground">
-          {contact.name}
+          {contact.firstName} {contact.lastName}
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="flex flex-col">
         <SheetHeader className="gap-1">
-          <SheetTitle>{contact.name}</SheetTitle>
+          <SheetTitle>{contact.firstName}</SheetTitle>
           <SheetDescription>
             {contact.jobTitle} at {contact.company}
           </SheetDescription>
@@ -570,7 +575,7 @@ function TableCellViewer({ contact }: { contact: Contact }) {
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" defaultValue={contact.name} />
+              <Input id="name" defaultValue={contact.firstName} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
@@ -603,10 +608,12 @@ function TableCellViewer({ contact }: { contact: Contact }) {
                   <SelectValue placeholder="Select groups" />
                 </SelectTrigger>
                 <SelectContent>
-                  {contact.groups.map(group => (
-                    <SelectItem key={group} value={group}>
-                      {group}
-                    </SelectItem>
+                  {Object.values(Group)
+                    .filter((value) => typeof value === "string")
+                    .map((group) => (
+                      <SelectItem key={group} value={group}>
+                        {group}
+                      </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

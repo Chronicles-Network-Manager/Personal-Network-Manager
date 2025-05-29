@@ -1,9 +1,7 @@
-import { Group } from "./Enums/Group";
-import { LocationData } from "./locationData";
-import { SocialData } from "./socialData";
-import { Pair } from "./Utils/Pair";
+import { Group } from "../Enums/Group";
+import { Pair } from "../Utils/Pair";
 
-export interface Contact {
+export default interface ContactsTable {
   userId: string;
   firstName: string;
   lastName: string;
@@ -22,11 +20,4 @@ export interface Contact {
   updatedAt: string; // ISO date string
   groups: Group[];
   interests: Pair[];
-
-  location: LocationData;
-  pastLocations: LocationData[];
-  visited: LocationData[];
-   
-  socialLinks: SocialData
-  reminders: string[]; // IDs
 }

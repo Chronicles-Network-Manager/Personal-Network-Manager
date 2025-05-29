@@ -87,7 +87,7 @@ const CurvedMapLogic: React.FC = () => {
 
       // On click, set this contact as selected
       marker.on("click", () => {
-        setSelectedContactId(contact.id);
+        setSelectedContactId(contact.userIid);
       });
 
       markersRef.current.push(marker);
@@ -125,7 +125,7 @@ const CurvedMapLogic: React.FC = () => {
     }
 
     // Find selected contact
-    const selectedContact = dummyContacts.find((c) => c.id === selectedContactId);
+    const selectedContact = dummyContacts.find((c) => c.userIid === selectedContactId);
     if (!selectedContact) return;
 
     const pos: LatLngExpression = [selectedContact.location.latitude, selectedContact.location.longitude];
@@ -134,7 +134,7 @@ const CurvedMapLogic: React.FC = () => {
     const popupContent = document.createElement("div");
     popupContent.innerHTML = `
       <div>
-        <b>${selectedContact.name}</b><br/>
+        <b>${selectedContact.firstName}</b><br/>
         ${selectedContact.jobTitle} at ${selectedContact.company}<br/>
         <button id="close-popup-btn" style="margin-top:8px;">Close ✖</button>
       </div>
@@ -171,7 +171,7 @@ const CurvedMapLogic: React.FC = () => {
       const pastLatLng: LatLngExpression = [pastLoc.latitude, pastLoc.longitude];
       const pastMarker = L.marker(pastLatLng, { icon: pastIcon })
         .addTo(map)
-        .bindPopup(`${selectedContact.name} - Past #${i + 1}`);
+        .bindPopup(`${selectedContact.firstName} - Past #${i + 1}`);
 
       pastMarkersRef.current.push(pastMarker);
 
