@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,7 +15,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 import {
   CheckCircle2Icon,
   CheckCircleIcon,
@@ -29,21 +29,21 @@ import {
   MoreVerticalIcon,
   PlusIcon,
   TrendingUpIcon,
-} from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { toast } from "sonner"
-import { z } from "zod"
+} from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { useIsMobile } from "@/hooks/use-mobile"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/chart";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -51,17 +51,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetClose,
@@ -71,7 +71,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 import {
   Table,
   TableBody,
@@ -79,15 +79,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { Group } from "@/types/Enums/Group"
-import { Contact } from "@/types/contact"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Group } from "@/types/Enums/Group";
+import { Contact } from "@/types/contact";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import { TooltipTrigger } from "@radix-ui/react-tooltip";
+import { supabase } from "@/lib/supbaseClient";
 
 const locationDataSchema = z.object({
   address: z.string().optional(),
@@ -142,7 +152,12 @@ const columns: ColumnDef<Contact>[] = [
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuContent align="end" className="w-50">
+          <DropdownMenuItem>
+            <span className="text-red-500">Request Contact Data</span>
+          </DropdownMenuItem>
+          <Separator className="my-1" />
+          <DropdownMenuItem>Mark As Favourite</DropdownMenuItem>
           <DropdownMenuItem>Edit</DropdownMenuItem>
           <DropdownMenuItem>Message</DropdownMenuItem>
           <DropdownMenuItem>Add to group</DropdownMenuItem>
@@ -182,7 +197,7 @@ const columns: ColumnDef<Contact>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      return <TableCellViewer contact={row.original} />
+      return <TableCellViewer contact={row.original} />;
     },
     enableHiding: false,
   },
@@ -191,7 +206,9 @@ const columns: ColumnDef<Contact>[] = [
     header: "Phone",
     cell: ({ row }) => (
       <div className="w-32">
-        {row.original.phone || <span className="text-muted-foreground">Not specified</span>}
+        {row.original.phone || (
+          <span className="text-muted-foreground">Not specified</span>
+        )}
       </div>
     ),
   },
@@ -211,7 +228,9 @@ const columns: ColumnDef<Contact>[] = [
     header: "Job Title",
     cell: ({ row }) => (
       <div className="w-32">
-        {row.original.jobTitle || <span className="text-muted-foreground">Not specified</span>}
+        {row.original.jobTitle || (
+          <span className="text-muted-foreground">Not specified</span>
+        )}
       </div>
     ),
   },
@@ -220,17 +239,21 @@ const columns: ColumnDef<Contact>[] = [
     header: "Email",
     cell: ({ row }) => (
       <div className="w-40 truncate">
-        {row.original.email || <span className="text-muted-foreground">Not specified</span>}
+        {row.original.email || (
+          <span className="text-muted-foreground">Not specified</span>
+        )}
       </div>
     ),
   },
-  
+
   {
     accessorKey: "location",
     header: "Location",
     cell: ({ row }) => (
       <div className="w-32">
-        {row.original.location.city+", "+row.original.location.country || <span className="text-muted-foreground">Not specified</span>}
+        {row.original.location.city + ", " + row.original.location.country || (
+          <span className="text-muted-foreground">Not specified</span>
+        )}
       </div>
     ),
   },
@@ -240,7 +263,7 @@ const columns: ColumnDef<Contact>[] = [
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {row.original.groups.length > 0 ? (
-          row.original.groups.slice(0, 3).map(group => (
+          row.original.groups.slice(0, 3).map((group) => (
             <Badge key={group} variant="secondary" className="truncate">
               {group}
             </Badge>
@@ -256,30 +279,55 @@ const columns: ColumnDef<Contact>[] = [
       </div>
     ),
   },
-]
+];
 
-export function DataTable({
-  data: initialData,
-}: {
-  data: Contact[]
-}) {
-  const [data, setData] = React.useState(() => initialData)
+export function DataTable({ data: initialData }: { data: Contact[] }) {
+  const [data, setData] = React.useState(() => initialData);
+  const [email, setEmail] = React.useState("");
+  const [otpLoading, setOtpLoading] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+
+  const sendEmailToUser = async () => {
+    setOtpLoading(true);
+    setMessage("");
+
+    if (!email) {
+      setMessage("Please enter a valid email.");
+      setOtpLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: "https://chronicles-form.netlify.app/form", // Optional: your redirect URL after click
+      },
+    });
+
+    if (error) {
+      setMessage(`Failed to send OTP: ${error.message}`);
+    } else {
+      setMessage(`OTP sent to ${email}. Please check your email.`);
+    }
+
+    setOtpLoading(false);
+  };
 
   React.useEffect(() => {
     setData(initialData);
   }, [initialData]);
 
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
-  })
+  });
 
   const table = useReactTable({
     data,
@@ -304,7 +352,7 @@ export function DataTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   return (
     <Tabs
@@ -381,14 +429,81 @@ export function DataTable({
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  )
+                  );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <PlusIcon />
-            <span className="hidden lg:inline">Add Contact</span>
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <PlusIcon />
+                <span className="hidden lg:inline">Add Contact</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[1000px]">
+              <DialogHeader>
+                <DialogTitle>Add a Contact</DialogTitle>
+                <DialogDescription>
+                  Choose a method to add contacts below
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-0 py-4">
+                {/* Email Section */}
+                <div className="space-y-4 px-6 border-r">
+                  <Input
+                    type="email"
+                    placeholder="Enter contact's email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Button
+                    onClick={sendEmailToUser}
+                    className="w-full"
+                    disabled={otpLoading}
+                  >
+                    {otpLoading ? "Sending OTP..." : "Request Information"}
+                  </Button>
+                </div>
+
+                {/* QR Code Section */}
+                <div className="flex flex-col items-center space-y-4 px-6 border-r">
+                  <div className="relative w-full pb-[100%] rounded-md overflow-hidden border">
+                    <img
+                      src="./qr.png"
+                      alt="QR Code"
+                      className="absolute top-0 left-0 w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* CSV Upload Section */}
+                <div className="space-y-4 px-6">
+                  <Input type="file" />
+                  <div className="flex gap-2">
+                    <Button size="sm">Submit</Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            aria-label="Help"
+                          >
+                            ?
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Upload a CSV file with headers:{" "}
+                          <code>name,email,phone</code>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <TabsContent
@@ -397,50 +512,53 @@ export function DataTable({
       >
         <div className="overflow-hidden rounded-lg border">
           <Table>
-              <TableHeader className="sticky top-0 z-10 bg-muted">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      )
-                    })}
+            <TableHeader className="sticky top-0 z-10 bg-muted">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="**:data-[slot=table-cell]:first:w-8">
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No contacts found.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No contacts found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
@@ -455,7 +573,7 @@ export function DataTable({
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value))
+                  table.setPageSize(Number(value));
                 }}
               >
                 <SelectTrigger className="w-20" id="rows-per-page">
@@ -520,27 +638,21 @@ export function DataTable({
           </div>
         </div>
       </TabsContent>
-      <TabsContent
-        value="groups"
-        className="flex flex-col px-4 lg:px-6"
-      >
+      <TabsContent value="groups" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
       <TabsContent value="reminders" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
-      <TabsContent
-        value="analytics"
-        className="flex flex-col px-4 lg:px-6"
-      >
+      <TabsContent value="analytics" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
-  )
+  );
 }
 
 function TableCellViewer({ contact }: { contact: Contact }) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   return (
     <Sheet>
@@ -599,7 +711,12 @@ function TableCellViewer({ contact }: { contact: Contact }) {
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="location">Location</Label>
-              <Input id="location" defaultValue={contact.location.city+", "+contact.location.country} />
+              <Input
+                id="location"
+                defaultValue={
+                  contact.location.city + ", " + contact.location.country
+                }
+              />
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="groups">Groups</Label>
@@ -614,7 +731,7 @@ function TableCellViewer({ contact }: { contact: Contact }) {
                       <SelectItem key={group} value={group}>
                         {group}
                       </SelectItem>
-                  ))}
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -635,5 +752,5 @@ function TableCellViewer({ contact }: { contact: Contact }) {
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

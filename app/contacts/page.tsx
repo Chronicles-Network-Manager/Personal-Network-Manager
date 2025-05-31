@@ -14,16 +14,12 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { DataTable } from "./data-table2"
-import {dummyContacts} from '@/data/contacts'; // adjust path as needed
 import type { Contact } from '@/types/contact';  // your Contact interface
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supbaseClient"
 import { getContactWithAllDetails } from "../Services/supabaseService"
 import GetContactForUserIdDTO from "@/types/InputDTO/GetContactForUserIdDTO"
 import { getDataForContactsSection } from "../Services/CRMService"
-
-const contacts: Contact[] = dummyContacts as Contact[];
-
 
 export default function Contacts() {
   const [data, setData] = useState<Contact[]>([]);
