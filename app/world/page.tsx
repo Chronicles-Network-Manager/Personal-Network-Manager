@@ -42,6 +42,7 @@
 // }
 
 "use client"
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -66,11 +67,10 @@ export default function World() {
   return (
     <div className="relative h-screen w-full"> {/* Full viewport container */}
       <CurvedMap /> {/* Map will now fill this container */}
-      
+
       {/* Fixed header overlay */}
-      <header className={`fixed top-4 z-[1000] flex h-12 items-center gap-2 bg-background/90 backdrop-blur-sm rounded-lg border p-4 shadow-sm transition-all duration-300 ${
-        isOpen.open ? 'left-[310px]' : 'left-[110px]'
-      }`}>
+      <header className={`fixed top-4 z-[1000] flex h-12 items-center gap-2 bg-background/90 backdrop-blur-sm rounded-lg border p-4 shadow-sm transition-all duration-300 ${isOpen.open ? 'left-[270px]' : 'left-[70px]'
+        }`}>
         <div className="flex items-center gap-2">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
@@ -87,6 +87,9 @@ export default function World() {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+        </div>
+        <div className="flex items-center pl-8">
+          <ThemeToggle />
         </div>
       </header>
     </div>

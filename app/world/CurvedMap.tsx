@@ -4,11 +4,13 @@ import {
   MapContainer,
   TileLayer,
   useMap,
+  ZoomControl,
 } from "react-leaflet";
 import L, { LatLngExpression, Marker as LeafletMarker, Polyline as LeafletPolyline } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Contact } from "@/types/contact";
 import { getDataForContactsSection } from "../Services/CRMService";
+import { useTheme } from "next-themes";
 
 const iconUrl = "https://cdn-icons-png.flaticon.com/512/252/252025.png";
 
@@ -205,8 +207,8 @@ const CurvedMapLogic: React.FC = () => {
   return null;
 };
 
-// CSS to disable pointer events on disabled markers
-const style = (
+// CSS to disable pointer events on disabled markers and apply black/white map styling
+const MapStyle: React.FC<{ isDark: boolean }> = ({ isDark }) => (
   <style>
     {`
       .disabled-marker {
@@ -216,14 +218,27 @@ const style = (
       .grey-marker img {
         filter: grayscale(80%) brightness(70%);
       }
+      .leaflet-tile-container img {
+        filter: grayscale(100%) ${isDark ? 'invert(1)' : 'brightness(0.9)'};
+      }
     `}
   </style>
 );
 
 const CurvedMap: React.FC = () => {
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  // Determine if we're in dark mode
+  const isDark = mounted && (resolvedTheme === 'dark' || theme === 'dark');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <>
-      {style}
+      <MapStyle isDark={isDark} />
       <MapContainer
         center={[30, 20]}
         zoom={3}
@@ -234,6 +249,7 @@ const CurvedMap: React.FC = () => {
           [90, 180],
         ]}
         maxBoundsViscosity={1.0}
+        zoomControl={false}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
@@ -242,6 +258,7 @@ const CurvedMap: React.FC = () => {
           maxZoom={19}
           noWrap={true}
         />
+        <ZoomControl position="bottomright" />
         <CurvedMapLogic />
       </MapContainer>
     </>

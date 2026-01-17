@@ -9,6 +9,7 @@ import {
   Command,
   FolderSync,
   Globe,
+  Home,
   LifeBuoy,
   Phone,
   Send,
@@ -36,6 +37,11 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   projects: [
+    {
+      name: "Home",
+      url: "/",
+      icon: Home,
+    },
     {
       name: "Phonebook",
       url: "/contacts",
@@ -103,8 +109,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">One CRM</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-semibold">Chronicles</span>
+                  <span className="truncate text-xs">Test Version v0.1</span>
                 </div>
               </a>
             </SidebarMenuButton>
