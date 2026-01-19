@@ -88,7 +88,7 @@ export default function World() {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="flex items-center pl-8">
+        <div className="flex items-center pl-2">
           <ThemeToggle />
         </div>
       </header>
