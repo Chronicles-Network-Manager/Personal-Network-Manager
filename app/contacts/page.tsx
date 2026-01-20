@@ -21,15 +21,19 @@ import { supabase } from "@/lib/supbaseClient"
 import { getContactWithAllDetails } from "../Services/supabaseService"
 import GetContactForUserIdDTO from "@/types/InputDTO/GetContactForUserIdDTO"
 import { getDataForContactsSection } from "../Services/CRMService"
+import { LoaderIcon } from "lucide-react"
 
 export default function Contacts() {
   const [data, setData] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       const { data, error } = await getDataForContactsSection();
       if (error) console.error(error);
       else setData(data ?? []);
+      setLoading(false);
     }
 
     fetchData();
@@ -60,8 +64,14 @@ export default function Contacts() {
           <div className="flex items-center px-4">
             <ThemeToggle />
           </div>
-        </header>        
-        <DataTable data={data} />
+        </header>
+        {loading ? (
+          <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+            <LoaderIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <DataTable data={data} />
+        )}
       </SidebarInset>
   )
 }
