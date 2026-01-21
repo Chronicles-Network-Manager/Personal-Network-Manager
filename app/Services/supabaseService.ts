@@ -42,11 +42,33 @@ export async function getAllReminders(): Promise<RemindersTable[]> {
   const { data, error } = await supabase.from('Reminders').select('*');
 
   if (error) {
-    console.error('Error fetching contacts:', error);
+    console.error('Error fetching reminders:', error);
     return [];
   }
 
   return data as RemindersTable[];
+}
+
+export async function getAllRemindersWithContacts() {
+  const { data, error } = await supabase
+    .from('Reminders')
+    .select(`
+      *,
+      Contacts (
+        userId,
+        firstName,
+        lastName,
+        middleNames
+      )
+    `);
+
+  if (error) {
+    console.error('Error fetching reminders with contacts:', error);
+    console.error('Error details:', error);
+    return { data: null, error };
+  }
+
+  return { data, error };
 }
 
 export async function getContactWithAllDetails(userId?: string) {
