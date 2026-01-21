@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supbaseClient"
+import { LocationType } from "@/types/Enums/LocationType";
 import GetContactForUserIdDTO from "@/types/InputDTO/GetContactForUserIdDTO";
 import ContactsTable from "@/types/Supabase/ContactsTable";
 import LocationTable from "@/types/Supabase/LocationTable";
