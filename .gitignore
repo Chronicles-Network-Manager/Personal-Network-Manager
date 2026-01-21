@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+faiss_ids.json
+faiss.index
+
 # testing
 /coverage
 

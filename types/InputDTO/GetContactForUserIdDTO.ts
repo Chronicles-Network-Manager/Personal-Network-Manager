@@ -11,7 +11,7 @@ export default interface GetContactForUserIdDTO {
     userId: string;
     firstName: string;
     lastName: string;
-    middleName?: string;
+    middleNames?: string;
     phone: string;
     email: string;
     otherPhones?: string[];

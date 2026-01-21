@@ -38,13 +38,13 @@ export async function getDataForContactsSection(): Promise<{
       other: contact.Socials[0]?.other || "",
     };
 
-    const reminders: string[] = contact.Reminders.map(r => r.id);
+    const reminders = contact.Reminders || [];
 
     return {
       userId: contact.userId,
       firstName: contact.firstName,
       lastName: contact.lastName,
-      middleName: contact.middleName,
+      middleName: contact.middleNames, // Map from DB column middleNames to Contact interface middleName
       phone: contact.phone,
       email: contact.email,
       otherPhones: contact.otherPhones || [],

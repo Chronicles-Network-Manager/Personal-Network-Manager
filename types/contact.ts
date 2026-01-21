@@ -2,6 +2,7 @@ import { Group } from "./Enums/Group";
 import { LocationData } from "./locationData";
 import { SocialData } from "./socialData";
 import { Pair } from "./Utils/Pair";
+import RemindersTable from "./Supabase/RemindersTable";
 
 export interface Contact {
   userId: string;
@@ -28,5 +29,5 @@ export interface Contact {
   visited: LocationData[];
    
   socialLinks: SocialData
-  reminders: string[]; // IDs
+  reminders: RemindersTable[]; // Full reminder objects
 }
